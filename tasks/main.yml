@@ -1,0 +1,74 @@
+---
+- name: Check for the existence of docker
+  stat:
+    path: /usr/bin/docker
+  register: docker_exists
+
+- name: Download Docker Install Script
+  become: yes
+  become_method: sudo
+  get_url:
+    url: https://get.docker.com/
+    dest: /tmp/docker.sh
+    mode: 0777
+  when: docker_exists.stat.exists == False
+
+- name: Execute Docker Install Script
+  become: yes
+  become_method: sudo
+  shell: /tmp/docker.sh
+  when: docker_exists.stat.exists == False
+
+- name: Add ubuntu to Docker group
+  become: yes
+  become_method: sudo
+  user:
+    name: 'ubuntu'
+    groups: docker
+    append: yes
+  when: docker_exists.stat.exists == False
+
+- name: Check for the existence of docker_machine
+  stat:
+    path: /usr/local/bin/docker-machine
+  register: docker_machine_exists
+
+- name: Download Docker Machine Install Script
+  become: yes
+  become_method: sudo
+  get_url:
+    url: "https://github.com/docker/machine/releases/download/v0.13.0/docker-machine-{{ ansible_system }}-{{ ansible_machine }}"
+    dest: /tmp/docker-machine
+    mode: 0755
+  when: docker_machine_exists.stat.exists == False
+
+- name: Copy Docker Machine Script to /usr/local/bin
+  become: yes
+  become_method: sudo
+  copy:
+    src: /tmp/docker-machine
+    dest: /usr/local/bin/docker-machine
+    remote_src: yes
+    mode: 0755
+  when: docker_machine_exists.stat.exists == False
+
+- name: Install Docker Compose
+  become: yes
+  become_method: sudo
+  apt:
+    name: docker-compose
+    state: latest
+
+- name: Remove Docker Install Script
+  become: yes
+  become_method: sudo
+  file:
+    path: /tmp/docker.sh
+    state: absent
+
+- name: Remove Docker Machine Install Script
+  become: yes
+  become_method: sudo
+  file:
+    path: /tmp/docker-machine
+    state: absent

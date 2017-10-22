@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Trevor Christiansen
+  description: Installs docker (v0.13.0), docker-machine, docker-compose, and adds user 'ubuntu' to docker group.
+  license: BSD
+  min_ansible_version: 2.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+
+  galaxy_tags:
+    - docker
+    - docker-machine
+    - docker-compose
+
+dependencies:
+  - tjcim.ansible-vagrant-box
