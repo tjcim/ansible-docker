@@ -3,6 +3,10 @@ Ansible Docker
 
 Installs docker (v0.13.0), docker-machine and docker-compose
 
+* docker
+* docker-machine
+* docker-compose
+
 Requirements
 ------------
 
